@@ -1,9 +1,13 @@
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
 using BusinessEntities;
 using Core.Services.Users;
+using Microsoft.Ajax.Utilities;
 using WebApi.Models.Users;
 
 namespace WebApi.Controllers
@@ -15,13 +19,15 @@ namespace WebApi.Controllers
         private readonly IDeleteUserService _deleteUserService;
         private readonly IGetUserService _getUserService;
         private readonly IUpdateUserService _updateUserService;
+        private readonly IValidateUserService _validateUserService;
 
-        public UserController(ICreateUserService createUserService, IDeleteUserService deleteUserService, IGetUserService getUserService, IUpdateUserService updateUserService)
+        public UserController(ICreateUserService createUserService, IDeleteUserService deleteUserService, IGetUserService getUserService, IUpdateUserService updateUserService, IValidateUserService validateUserService)
         {
             _createUserService = createUserService;
             _deleteUserService = deleteUserService;
             _getUserService = getUserService;
             _updateUserService = updateUserService;
+            _validateUserService = validateUserService;
         }
 
         [Route("{userId:guid}/create")]
@@ -34,7 +40,7 @@ namespace WebApi.Controllers
             if (_getUserService.GetUser(userId) == null)
             {
                 // User id does not exist so create the new user
-            var user = _createUserService.Create(userId, model.Name, model.Email, model.Type, model.AnnualSalary, model.Tags);
+                var user = _createUserService.Create(userId, model.Name, model.Email, model.Type, model.AnnualSalary, model.Tags);
                 result = Found(new UserData(user));
             }
             else
@@ -50,13 +56,27 @@ namespace WebApi.Controllers
         [HttpPost]
         public HttpResponseMessage UpdateUser(Guid userId, [FromBody] UserModel model)
         {
+            HttpResponseMessage result = null;
+
             var user = _getUserService.GetUser(userId);
             if (user == null)
             {
                 return DoesNotExist();
             }
-            _updateUserService.Update(user, model.Name, model.Email, model.Type, model.AnnualSalary, model.Tags);
-            return Found(new UserData(user));
+
+            List<string> errors = _validateUserService.Validate(model.Name, model.Email, model.Type, model.AnnualSalary, model.Tags);
+
+            if (errors.Count == 0)
+            {
+                _updateUserService.Update(user, model.Name, model.Email, model.Type, model.AnnualSalary, model.Tags);
+                result = Found(new UserData(user));
+            }
+            else
+            {
+                result = Request.CreateErrorResponse(HttpStatusCode.OK, string.Join(", ", errors));
+            }
+
+            return result;
         }
 
         [Route("{userId:guid}/delete")]
