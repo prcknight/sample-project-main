@@ -40,7 +40,7 @@ namespace WebApi.Controllers
             if (_getUserService.GetUser(userId) == null)
             {
                 // User id does not exist so create the new user
-                var user = _createUserService.Create(userId, model.Name, model.Email, model.Type, model.AnnualSalary, model.Tags);
+                var user = _createUserService.Create(userId, model.Name, model.Email, model.Type, model.AnnualSalary, model.Age, model.Tags);
                 result = Found(new UserData(user));
             }
             else
@@ -68,7 +68,7 @@ namespace WebApi.Controllers
 
             if (errors.Count == 0)
             {
-                _updateUserService.Update(user, model.Name, model.Email, model.Type, model.AnnualSalary, model.Tags);
+                _updateUserService.Update(user, model.Name, model.Email, model.Type, model.AnnualSalary, model.Age, model.Tags);
                 result = Found(new UserData(user));
             }
             else
