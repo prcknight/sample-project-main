@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
@@ -28,8 +28,22 @@ namespace WebApi.Controllers
         [HttpPost]
         public HttpResponseMessage CreateUser(Guid userId, [FromBody] UserModel model)
         {
+            HttpResponseMessage result = null;
+
+            // Check to see if this user id exists
+            if (_getUserService.GetUser(userId) == null)
+            {
+                // User id does not exist so create the new user
             var user = _createUserService.Create(userId, model.Name, model.Email, model.Type, model.AnnualSalary, model.Tags);
-            return Found(new UserData(user));
+                result = Found(new UserData(user));
+            }
+            else
+            {
+                // User id does exist, so return an error
+                result = DoesNotExist();
+            }
+
+            return result;
         }
 
         [Route("{userId:guid}/update")]
