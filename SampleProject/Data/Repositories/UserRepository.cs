@@ -38,6 +38,7 @@ namespace Data.Repositories
                 {
                     hasFirstParameter = true;
                 }
+
                 query = query.Where($"Name:*{name}*");
             }
 
@@ -47,8 +48,23 @@ namespace Data.Repositories
                 {
                     query = query.AndAlso();
                 }
+
                 query = query.WhereEquals("Email", email);
             }
+
+            return query.ToList();
+
+        }
+
+        public IEnumerable<User> GetByTag(string tag = null)
+        {
+            var query = _documentSession.Advanced.DocumentQuery<User, UsersListIndex>();
+
+            if (tag != null)
+            {
+                query = query.Where($"Tags:*{tag}");
+            }
+         
             return query.ToList();
         }
 
