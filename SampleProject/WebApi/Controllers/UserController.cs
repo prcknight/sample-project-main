@@ -122,8 +122,12 @@ namespace WebApi.Controllers
         [Route("list/tag")]
         [HttpGet]
         public HttpResponseMessage GetUsersByTag(string tag)
-        {
-            throw new NotImplementedException();
+        { 
+            var users = _getUserService.GetUsersByTag(tag)
+                .Select(u => new UserData(u))
+                .ToList();
+
+            return Found(users);
         }
     }
 }

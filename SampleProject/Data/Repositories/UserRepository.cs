@@ -62,7 +62,9 @@ namespace Data.Repositories
 
             if (tag != null)
             {
-                query = query.Where($"Tags:*{tag}");
+                string upperTag = tag.ToUpper();
+                string lowerTag = tag.ToLower();
+                query = query.Where($"Tags:({upperTag} OR {lowerTag})");
             }
          
             return query.ToList();
