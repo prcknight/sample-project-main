@@ -1,0 +1,36 @@
+﻿using BusinessEntities;
+using Common;
+using Core.Factories;
+using Core.Services.Users;
+using Data.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Core.Services.Products
+{
+    [AutoRegister]
+    public class CreateProductService : ICreateProductService
+    {
+        private readonly IUpdateProductService _updateProductService;
+        private readonly IIdObjectFactory<Product> _productFactory;
+        private readonly IProductRepository _productRepository;
+
+        public CreateProductService(IIdObjectFactory<Product> productFactory, IProductRepository productRepository, IUpdateProductService updateProductService)
+        {
+            _productFactory = productFactory;
+            _productRepository = productRepository;
+            _updateProductService = updateProductService;
+        }
+
+        public Product Create(Guid id, string name, string description, IEnumerable<string> categories,
+            decimal unitprice,
+            decimal quantity, string orderunit, string countunit)
+        {
+            var product = _productFactory.Create(id);
+            _updateProductService.Update(product, name, description, categories, unitprice, quantity, orderunit, countunit);
+            _productRepository.Save(product);
+            return product;
+        }
+    }
+}
