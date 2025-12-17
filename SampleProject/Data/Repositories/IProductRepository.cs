@@ -8,8 +8,7 @@ namespace Data.Repositories
     public interface IProductRepository : IRepository<Product>
     {
         IEnumerable<Product> GetAll();
-        //IEnumerable<User> Get(UserTypes? userType = null, string name = null, string email = null);
-        //IEnumerable<User> GetByCategory(string category);
+        IEnumerable<Product> Get(string name = null, string category = null, string countunit = null);
         void DeleteAll();
     }
 }

@@ -10,7 +10,6 @@ namespace Core.Services.Products
         Product GetProduct(Guid id);
 
         IEnumerable<Product> GetAllProducts();
-        //IEnumerable<User> GetUsers(UserTypes? userType = null, string name = null, string email = null);
-        //IEnumerable<User> GetUsersByTag(string tag = null);
+        IEnumerable<Product> GetProducts(string name, string category, string countunit);
     }
 }

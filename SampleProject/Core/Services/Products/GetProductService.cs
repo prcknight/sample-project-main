@@ -26,5 +26,10 @@ namespace Core.Services.Products
         {
             return _productRepository.GetAll();
         }
+
+        public IEnumerable<Product> GetProducts(string name, string category, string countunit)
+        {
+            return _productRepository.Get(name, category, countunit);
+        }
     }
 }

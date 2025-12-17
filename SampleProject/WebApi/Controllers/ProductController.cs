@@ -102,6 +102,14 @@ namespace WebApi.Controllers
             return Found(new ProductData(product));
         }
 
+        [Route("getproducts")]
+        [HttpGet]
+        public HttpResponseMessage GetProducts(string name = null, string category = null, string countunit = null)
+        {
+            var products = _getProductService.GetProducts(name, category, countunit);
+            return Found(products);
+        }
+
         [Route("getall")]
         [HttpGet]
         public HttpResponseMessage GetAllProducts()
